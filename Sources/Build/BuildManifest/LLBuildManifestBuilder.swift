@@ -351,7 +351,7 @@ extension BuildParameters {
         self.buildPath.appending(component: path.basename)
     }
 
-    var buildConfig: String { self.configuration.dirname }
+    var buildConfig: String { self.configuration?.dirname ?? "" }
 }
 
 extension Sequence where Element: Hashable {

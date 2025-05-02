@@ -24,7 +24,7 @@ import class Basics.ObservabilityScope
 import class Basics.ObservabilitySystem
 import class Basics.ThreadSafeArrayStore
 
-import enum PackageModel.BuildConfiguration
+import struct PackageModel.BuildConfiguration
 import enum PackageModel.BuildSettings
 import class PackageModel.ClangModule
 import struct PackageModel.ConfigurationCondition

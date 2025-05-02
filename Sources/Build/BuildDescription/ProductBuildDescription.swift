@@ -121,10 +121,7 @@ public final class ProductBuildDescription: SPMBuildCore.ProductBuildDescription
         }
 
         let triple = self.buildParameters.triple
-        switch self.buildParameters.configuration {
-        case .debug:
-            return []
-        case .release:
+        if self.buildParameters.configuration?.traits.contains("RELEASE") == true {
             if triple.isApple() {
                 return ["-Xlinker", "-dead_strip"]
             } else if triple.isWindows() {
@@ -133,6 +130,8 @@ public final class ProductBuildDescription: SPMBuildCore.ProductBuildDescription
                 return ["-Xlinker", "--gc-sections"]
             }
         }
+        
+        return []
     }
 
     /// The arguments to the librarian to create a static library.

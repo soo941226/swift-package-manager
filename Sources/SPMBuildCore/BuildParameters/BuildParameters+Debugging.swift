@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import struct Basics.Triple
-import enum PackageModel.BuildConfiguration
+import struct PackageModel.BuildConfiguration
 
 extension BuildParameters {
     public struct Debugging: Encodable {
@@ -63,10 +63,11 @@ extension BuildParameters {
 
     /// The debugging strategy according to the current build parameters.
     public var debuggingStrategy: DebuggingStrategy? {
-        guard configuration == .debug, prepareForIndexing == .off else {
+        guard configuration?.traits.contains("DEBUG") == true,
+              prepareForIndexing == .off else {
             return nil
         }
-
+        
         if self.triple.isApple() {
             return .swiftAST
         }

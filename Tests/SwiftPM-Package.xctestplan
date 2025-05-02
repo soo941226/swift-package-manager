@@ -1,0 +1,213 @@
+{
+  "configurations" : [
+    {
+      "id" : "66E3CA3A-3BFB-4071-893F-4AAF528526E3",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "dummy-swiftc",
+      "name" : "dummy-swiftc"
+    }
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "Foo"
+      ],
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "BasicsTests",
+        "name" : "BasicsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "BuildTests",
+        "name" : "BuildTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CommandsTests",
+        "name" : "CommandsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FunctionalPerformanceTests",
+        "name" : "FunctionalPerformanceTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FunctionalTests",
+        "name" : "FunctionalTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "LLBuildManifestTests",
+        "name" : "LLBuildManifestTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageCollectionsModelTests",
+        "name" : "PackageCollectionsModelTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageCollectionsSigningTests",
+        "name" : "PackageCollectionsSigningTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageCollectionsTests",
+        "name" : "PackageCollectionsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageDescriptionTests",
+        "name" : "PackageDescriptionTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageFingerprintTests",
+        "name" : "PackageFingerprintTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageGraphPerformanceTests",
+        "name" : "PackageGraphPerformanceTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageGraphTests",
+        "name" : "PackageGraphTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageLoadingTests",
+        "name" : "PackageLoadingTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageModelSyntaxTests",
+        "name" : "PackageModelSyntaxTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageModelTests",
+        "name" : "PackageModelTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackagePluginAPITests",
+        "name" : "PackagePluginAPITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageRegistryTests",
+        "name" : "PackageRegistryTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "PackageSigningTests",
+        "name" : "PackageSigningTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "QueryEngineTests",
+        "name" : "QueryEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SPMBuildCoreTests",
+        "name" : "SPMBuildCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SourceControlTests",
+        "name" : "SourceControlTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SourceKitLSPAPITests",
+        "name" : "SourceKitLSPAPITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WorkspaceTests",
+        "name" : "WorkspaceTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "XCBuildSupportTests",
+        "name" : "XCBuildSupportTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "_AsyncFileSystemTests",
+        "name" : "_AsyncFileSystemTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "_InternalTestSupportTests",
+        "name" : "_InternalTestSupportTests"
+      }
+    }
+  ],
+  "version" : 1
+}

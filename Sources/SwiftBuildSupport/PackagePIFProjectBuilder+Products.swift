@@ -23,6 +23,7 @@ import enum PackageModel.PackageCondition
 import class PackageModel.Product
 import enum PackageModel.ProductType
 import struct PackageModel.RegistryReleaseMetadata
+import struct PackageModel.BuildConfiguration
 
 import struct PackageGraph.ResolvedModule
 import struct PackageGraph.ResolvedPackage
@@ -465,28 +466,24 @@ extension PackagePIFProjectBuilder {
         // Until this point the build settings for the target have been the same between debug and release
         // configurations.
         // The custom manifest settings might cause them to diverge.
-        var debugSettings: ProjectModel.BuildSettings = settings
-        var releaseSettings: ProjectModel.BuildSettings = settings
+        let everyConfigurations: [BuildConfiguration] = mainModule.allBuildSettings.targetSettings.compactMap(\.key)
+        var everySettings = [BuildConfiguration: ProjectModel.BuildSettings]()
+        everyConfigurations.forEach { everySettings[$0] = settings }
 
         // Apply target-specific build settings defined in the manifest.
         for (buildConfig, declarationsByPlatform) in mainModule.allBuildSettings.targetSettings {
             for (platform, declarations) in declarationsByPlatform {
                 // A `nil` platform means that the declaration applies to *all* platforms.
                 for (declaration, stringValues) in declarations {
-                    switch buildConfig {
-                    case .debug:
-                        debugSettings.append(values: stringValues, to: declaration, platform: platform)
-                    case .release:
-                        releaseSettings.append(values: stringValues, to: declaration, platform: platform)
-                    }
+                    everySettings[buildConfig]?.append(values: stringValues, to: declaration, platform: platform)
                 }
             }
         }
-        self.project[keyPath: mainModuleTargetKeyPath].common.addBuildConfig { id in
-            BuildConfig(id: id, name: "Debug", settings: debugSettings)
-        }
-        self.project[keyPath: mainModuleTargetKeyPath].common.addBuildConfig { id in
-            BuildConfig(id: id, name: "Release", settings: releaseSettings)
+
+        everySettings.forEach { config, settings in
+            self.project[keyPath: mainModuleTargetKeyPath].common.addBuildConfig { id in
+                BuildConfig(id: id, name: config.rawValue, settings: settings)
+            }
         }
 
         // Collect linked binaries.

@@ -170,7 +170,7 @@ public final class XcodeBuildSystem: SPMBuildCore.BuildSystem {
             "build",
             buildParameters.pifManifest.pathString,
             "--configuration",
-            buildParameters.configuration.xcbuildName,
+            buildParameters.configuration?.xcbuildName ?? "",
             "--derivedDataPath",
             buildParameters.dataPath.pathString,
             "--target",
@@ -291,7 +291,7 @@ public final class XcodeBuildSystem: SPMBuildCore.BuildSystem {
 
         // Generate the build parameters.
         let params = XCBBuildParameters(
-            configurationName: buildParameters.configuration.xcbuildName,
+            configurationName: buildParameters.configuration?.xcbuildName ?? "",
             overrides: .init(synthesized: .init(table: settings)),
             activeRunDestination: runDestination
         )
@@ -372,10 +372,7 @@ struct XCBBuildParameters: Encodable {
 
 extension BuildConfiguration {
     public var xcbuildName: String {
-        switch self {
-        case .debug: "Debug"
-        case .release: "Release"
-        }
+        rawValue
     }
 }
 

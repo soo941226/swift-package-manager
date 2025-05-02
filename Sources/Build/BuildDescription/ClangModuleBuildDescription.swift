@@ -436,11 +436,10 @@ public final class ClangModuleBuildDescription {
 
     /// Optimization arguments according to the build configuration.
     private var optimizationArguments: [String] {
-        switch buildParameters.configuration {
-        case .debug:
-            return ["-O0"]
-        case .release:
-            return ["-O2"]
+        if buildParameters.configuration?.traits.contains("DEBUG") == true {
+            ["-O0"]
+        } else {
+            ["-O2"]
         }
     }
 
@@ -448,11 +447,8 @@ public final class ClangModuleBuildDescription {
     private var activeCompilationConditions: [String] {
         var compilationConditions = ["-DSWIFT_PACKAGE=1"]
 
-        switch buildParameters.configuration {
-        case .debug:
+        if buildParameters.configuration?.traits.contains("DEBUG") == true {
             compilationConditions += ["-DDEBUG=1"]
-        case .release:
-            break
         }
 
         return compilationConditions

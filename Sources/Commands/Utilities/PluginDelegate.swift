@@ -118,9 +118,9 @@ final class PluginDelegate: PluginInvocationDelegate {
         var buildParameters = try self.swiftCommandState.productsBuildParameters
         switch parameters.configuration {
         case .debug:
-            buildParameters.configuration = .debug
+            buildParameters.configuration = .init(rawValue: "DEBUG", traits: Set(parameters.otherSwiftcFlags))
         case .release:
-            buildParameters.configuration = .release
+            buildParameters.configuration = .init(rawValue: "RELEASE", traits: Set(parameters.otherSwiftcFlags))
         case .inherit:
             // The top level argument parser set buildParameters.configuration according to the
             // --configuration command line parameter.   We don't need to do anything to inherit it.

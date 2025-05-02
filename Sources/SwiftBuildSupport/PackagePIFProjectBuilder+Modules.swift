@@ -22,6 +22,7 @@ import class PackageModel.Manifest
 import class PackageModel.Module
 import class PackageModel.Product
 import class PackageModel.SystemLibraryModule
+import struct PackageModel.BuildConfiguration
 
 import struct PackageGraph.ResolvedModule
 import struct PackageGraph.ResolvedPackage
@@ -29,6 +30,7 @@ import struct PackageGraph.ResolvedPackage
 #if canImport(SwiftBuild)
 
 import enum SwiftBuild.ProjectModel
+
 
 /// Extension to create PIF **modules** for a given package.
 extension PackagePIFProjectBuilder {
@@ -734,22 +736,17 @@ extension PackagePIFProjectBuilder {
         // Until this point the build settings for the target have been the same between debug and release
         // configurations.
         // The custom manifest settings might cause them to diverge.
-        var debugSettings = settings
-        var releaseSettings = settings
-
         let allBuildSettings = sourceModule.allBuildSettings
+        let everyConfigurations = allBuildSettings.targetSettings.keys
+        var everySettings = [BuildConfiguration: BuildSettings]()
+        everyConfigurations.forEach { everySettings[$0] = settings }
 
         // Apply target-specific build settings defined in the manifest.
         for (buildConfig, declarationsByPlatform) in allBuildSettings.targetSettings {
             for (platform, settingsByDeclaration) in declarationsByPlatform {
                 // Note: A `nil` platform means that the declaration applies to *all* platforms.
                 for (declaration, stringValues) in settingsByDeclaration {
-                    switch buildConfig {
-                    case .debug:
-                        debugSettings.append(values: stringValues, to: declaration, platform: platform)
-                    case .release:
-                        releaseSettings.append(values: stringValues, to: declaration, platform: platform)
-                    }
+                    everySettings[buildConfig]?.append(values: stringValues, to: declaration, platform: platform)
                 }
             }
         }
@@ -767,22 +764,15 @@ extension PackagePIFProjectBuilder {
         debugImpartedSettings[.LD_RUNPATH_SEARCH_PATHS] =
             ["$(BUILT_PRODUCTS_DIR)/PackageFrameworks"] +
             (debugImpartedSettings[.LD_RUNPATH_SEARCH_PATHS] ?? ["$(inherited)"])
-
-        self.project[keyPath: sourceModuleTargetKeyPath].common.addBuildConfig { id in
-            BuildConfig(
-                id: id,
-                name: "Debug",
-                settings: debugSettings,
-                impartedBuildSettings: debugImpartedSettings
-            )
-        }
-        self.project[keyPath: sourceModuleTargetKeyPath].common.addBuildConfig { id in
-            BuildConfig(
-                id: id,
-                name: "Release",
-                settings: releaseSettings,
-                impartedBuildSettings: impartedSettings
-            )
+        everySettings.forEach { config, setting in
+            self.project[keyPath: sourceModuleTargetKeyPath].common.addBuildConfig { id in
+                BuildConfig(
+                    id: id,
+                    name: config.rawValue,
+                    settings: settings,
+                    impartedBuildSettings: debugImpartedSettings
+                )
+            }
         }
 
         // Collect linked binaries.

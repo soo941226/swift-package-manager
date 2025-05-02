@@ -3,10 +3,7 @@ import PackageModel
 
 extension BuildConfiguration {
     public var swiftbuildName: String {
-        switch self {
-        case .debug: "Debug"
-        case .release: "Release"
-        }
+        rawValue
     }
 }
 

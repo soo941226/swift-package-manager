@@ -130,7 +130,7 @@ package struct LLBuildSystemConfiguration {
         }
     }
 
-    func configuration(for destination: BuildParameters.Destination) -> BuildConfiguration {
+    func configuration(for destination: BuildParameters.Destination) -> BuildConfiguration? {
         switch destination {
         case .host: self.toolsBuildParameters.configuration
         case .target: self.destinationBuildParameters.configuration
@@ -449,7 +449,7 @@ public final class BuildOperation: PackageStructureDelegate, SPMBuildCore.BuildS
 
         // Create backwards-compatibility symlink to old build path.
         let oldBuildPath = self.config.dataPath(for: .target).parentDirectory.appending(
-            component: configuration.dirname
+            component: configuration?.dirname ?? ""
         )
         if self.fileSystem.exists(oldBuildPath) {
             do { try self.fileSystem.removeFileTree(oldBuildPath) }
@@ -697,7 +697,7 @@ public final class BuildOperation: PackageStructureDelegate, SPMBuildCore.BuildS
         // Emit warnings about any unhandled files in authored packages. We do this after applying build tool plugins, once we know what files they handled.
         // rdar://113256834 This fix works for the plugins that do not have PreBuildCommands.
         let targetsToConsider: [ResolvedModule]
-        if let subset = subset, let recursiveDependencies = try
+        if let subset, let recursiveDependencies = try
             subset.recursiveDependencies(for: plan.graph, observabilityScope: observabilityScope) {
             targetsToConsider = recursiveDependencies
         } else {

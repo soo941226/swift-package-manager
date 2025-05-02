@@ -19,7 +19,7 @@ import struct Basics.Triple
 
 import struct Foundation.URL
 
-import enum PackageModel.BuildConfiguration
+import struct PackageModel.BuildConfiguration
 import struct PackageModel.BuildFlags
 import struct PackageModel.EnabledSanitizers
 import class PackageModel.Manifest
@@ -724,7 +724,7 @@ extension TraitConfiguration {
 
 extension BuildConfiguration {
     public init?(argument: String) {
-        self.init(rawValue: argument)
+        self.init(rawValue: argument, traits: [])
     }
 }
 

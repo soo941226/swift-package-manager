@@ -111,7 +111,7 @@ extension BuildParameters {
         case .off:
             addIndexStoreArguments = false
         case .auto:
-            if configuration == .debug {
+            if configuration?.traits.contains("DEBUG") == true {
                 addIndexStoreArguments = true
             } else if target.type == .test {
                 // Test discovery requires an index store for the test target to discover the tests

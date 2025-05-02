@@ -287,7 +287,7 @@ public final class SwiftCommandState {
 
     private let hostTriple: Basics.Triple?
 
-    package var preferredBuildConfiguration = BuildConfiguration.debug
+    package var preferredBuildConfiguration = BuildConfiguration(rawValue: "DEBUG", traits: ["DEBUG"])
 
     /// Create an instance of this tool.
     ///
@@ -859,7 +859,7 @@ public final class SwiftCommandState {
                 shouldEnableDebuggingEntitlement:
                 self.options.build
                     .getTaskAllowEntitlement ??
-                    (self.options.build.configuration ?? self.preferredBuildConfiguration == .debug),
+                (self.options.build.configuration ?? self.preferredBuildConfiguration)?.traits.contains("DEBUG") == true,
                 omitFramePointers: self.options.build.omitFramePointers
             ),
             driverParameters: .init(

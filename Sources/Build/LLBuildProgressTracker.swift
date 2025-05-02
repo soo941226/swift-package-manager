@@ -465,10 +465,10 @@ final class LLBuildProgressTracker: LLBuildBuildSystemDelegate, SwiftCompilerOut
         self.hadCommandFailure()
     }
 
-    func buildStart(configuration: BuildConfiguration) {
+    func buildStart(configuration: BuildConfiguration?) {
         self.queue.sync {
             self.progressAnimation.clear()
-            self.outputStream.send("Building for \(configuration == .debug ? "debugging" : "production")...\n")
+            self.outputStream.send("Building for \(configuration?.traits.contains("DEBUG") == true ? "debugging" : "production")...\n")
             self.outputStream.flush()
         }
     }

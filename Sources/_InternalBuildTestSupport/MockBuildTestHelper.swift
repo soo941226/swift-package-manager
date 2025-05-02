@@ -40,7 +40,7 @@ public func mockBuildPlan(
 ) async throws -> Build.BuildPlan {
     try await mockBuildPlan(
         buildPath: buildPath,
-        config: environment.configuration ?? .debug,
+        config: environment.configuration ?? nil,
         platform: environment.platform,
         toolchain: toolchain,
         graph: graph,
@@ -57,7 +57,7 @@ public func mockBuildPlan(
 
 public func mockBuildPlan(
     buildPath: AbsolutePath? = nil,
-    config: BuildConfiguration = .debug,
+    config: BuildConfiguration? = nil,
     triple: Basics.Triple? = nil,
     platform: PackageModel.Platform? = nil,
     toolchain: PackageModel.Toolchain = MockToolchain(),
@@ -93,7 +93,7 @@ public func mockBuildPlan(
 
     let commonDebuggingParameters = BuildParameters.Debugging(
         triple: inferredTriple,
-        shouldEnableDebuggingEntitlement: config == .debug,
+        shouldEnableDebuggingEntitlement: config?.traits.contains("DEBUG") == true,
         omitFramePointers: omitFramePointers
     )
 

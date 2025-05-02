@@ -511,30 +511,30 @@ final class PackagePIFProjectBuilder: PIFProjectBuilder {
             settings[.SWIFT_ACTIVE_COMPILATION_CONDITIONS, default: ["$(inherited)"]].append("SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE")
         }
 
-        // For targets, we use the common build settings for both the "Debug" and the "Release" configurations (all
-        // differentiation is at the project level).
-        var debugSettings = settings
-        var releaseSettings = settings
-
+        var settingsForEachConfiguration: [BuildConfiguration: PIF.BuildSettings] = [:]
+        mainTarget.underlying.buildSettings.pifAssignments
+            .flatMap { $0.value }
+            .flatMap { $0.configurations }
+            .forEach { configuration in
+                settingsForEachConfiguration[configuration] = settings
+            }
         var impartedSettings = PIF.BuildSettings()
+
         try self.addManifestBuildSettings(
             from: mainTarget.underlying,
-            debugSettings: &debugSettings,
-            releaseSettings: &releaseSettings,
+            settings: &settingsForEachConfiguration,
             impartedSettings: &impartedSettings
         )
 
         let impartedBuildProperties = PIF.ImpartedBuildProperties(settings: impartedSettings)
-        pifTarget.addBuildConfiguration(
-            name: "Debug",
-            settings: debugSettings,
-            impartedBuildProperties: impartedBuildProperties
-        )
-        pifTarget.addBuildConfiguration(
-            name: "Release",
-            settings: releaseSettings,
-            impartedBuildProperties: impartedBuildProperties
-        )
+
+        settingsForEachConfiguration.forEach { config, setting in
+            pifTarget.addBuildConfiguration(
+                name: config.rawValue, settings: setting,
+                impartedBuildProperties: impartedBuildProperties)
+        }
+
+        pifTarget.impartedBuildSettings = impartedSettings
     }
 
     private func addLibraryTarget(for product: ResolvedProduct) {
@@ -747,29 +747,28 @@ final class PackagePIFProjectBuilder: PIFProjectBuilder {
             settings[.SWIFT_ACTIVE_COMPILATION_CONDITIONS, default: ["$(inherited)"]].append("SWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE")
         }
 
-        // For targets, we use the common build settings for both the "Debug" and the "Release" configurations (all
-        // differentiation is at the project level).
-        var debugSettings = settings
-        var releaseSettings = settings
+        var settingsForEachConfiguration: [BuildConfiguration: PIF.BuildSettings] = [:]
+        target.underlying.buildSettings.pifAssignments
+            .flatMap { $0.value }
+            .flatMap { $0.configurations }
+            .forEach { configuration in
+                settingsForEachConfiguration[configuration] = settings
+            }
 
-        try addManifestBuildSettings(
+        try self.addManifestBuildSettings(
             from: target.underlying,
-            debugSettings: &debugSettings,
-            releaseSettings: &releaseSettings,
+            settings: &settingsForEachConfiguration,
             impartedSettings: &impartedSettings
         )
 
         let impartedBuildProperties = PIF.ImpartedBuildProperties(settings: impartedSettings)
-        pifTarget.addBuildConfiguration(
-            name: "Debug",
-            settings: debugSettings,
-            impartedBuildProperties: impartedBuildProperties
-        )
-        pifTarget.addBuildConfiguration(
-            name: "Release",
-            settings: releaseSettings,
-            impartedBuildProperties: impartedBuildProperties
-        )
+
+        settingsForEachConfiguration.forEach { config, setting in
+            pifTarget.addBuildConfiguration(
+                name: config.rawValue, settings: setting,
+                impartedBuildProperties: impartedBuildProperties)
+        }
+
         pifTarget.impartedBuildSettings = impartedSettings
     }
 
@@ -976,9 +975,8 @@ final class PackagePIFProjectBuilder: PIFProjectBuilder {
     // Apply target-specific build settings defined in the manifest.
     private func addManifestBuildSettings(
         from target: Module,
-        debugSettings: inout PIF.BuildSettings,
-        releaseSettings: inout PIF.BuildSettings,
-        impartedSettings: inout PIF.BuildSettings
+        settings: inout [BuildConfiguration: PIF.BuildSettings],
+        impartedSettings: inout PIF.BuildSettings,
     ) throws {
         for (setting, assignments) in target.buildSettings.pifAssignments {
             for assignment in assignments {
@@ -991,26 +989,16 @@ final class PackagePIFProjectBuilder: PIFProjectBuilder {
                 if let platforms = assignment.platforms {
                     for platform in platforms {
                         for configuration in assignment.configurations {
-                            switch configuration {
-                            case .debug:
-                                debugSettings[setting, for: platform, default: ["$(inherited)"]] += value
-                                self.addInferredBuildSettings(
-                                    for: setting,
-                                    value: value,
-                                    platform: platform,
-                                    configuration: .debug,
-                                    settings: &debugSettings
-                                )
-                            case .release:
-                                releaseSettings[setting, for: platform, default: ["$(inherited)"]] += value
-                                self.addInferredBuildSettings(
-                                    for: setting,
-                                    value: value,
-                                    platform: platform,
-                                    configuration: .release,
-                                    settings: &releaseSettings
-                                )
-                            }
+                            guard var thisSetting = settings[configuration] else { continue }
+                            thisSetting[setting, for: platform, default: ["$(inherited)"]] += value
+                            self.addInferredBuildSettings(
+                                for: setting,
+                                value: value,
+                                platform: platform,
+                                configuration: configuration,
+                                settings: &thisSetting
+                            )
+                            settings[configuration] = thisSetting
                         }
 
                         if setting == .OTHER_LDFLAGS {
@@ -1019,24 +1007,16 @@ final class PackagePIFProjectBuilder: PIFProjectBuilder {
                     }
                 } else {
                     for configuration in assignment.configurations {
-                        switch configuration {
-                        case .debug:
-                            debugSettings[setting, default: ["$(inherited)"]] += value
-                            self.addInferredBuildSettings(
-                                for: setting,
-                                value: value,
-                                configuration: .debug,
-                                settings: &debugSettings
-                            )
-                        case .release:
-                            releaseSettings[setting, default: ["$(inherited)"]] += value
-                            self.addInferredBuildSettings(
-                                for: setting,
-                                value: value,
-                                configuration: .release,
-                                settings: &releaseSettings
-                            )
-                        }
+                        guard var thisSetting = settings[configuration] else { continue }
+                        thisSetting[setting, default: ["$(inherited)"]] += value
+                        self.addInferredBuildSettings(
+                            for: setting,
+                            value: value,
+                            configuration: configuration,
+                            settings: &thisSetting
+                        )
+
+                        settings[configuration] = thisSetting
                     }
 
                     if setting == .OTHER_LDFLAGS {

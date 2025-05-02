@@ -85,7 +85,7 @@ extension SwiftPackageCommand {
             }
 
             if commandState.options.build.configuration == nil {
-                commandState.preferredBuildConfiguration = .release
+                commandState.preferredBuildConfiguration = .init(rawValue: "RELEASE", traits: [])
             }
 
             try await commandState.createBuildSystem(explicitProduct: productToInstall.name, traitConfiguration: .init())

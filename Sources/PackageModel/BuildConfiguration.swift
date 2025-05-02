@@ -11,14 +11,26 @@
 //===----------------------------------------------------------------------===//
 
 /// The configuration of the build environment.
-public enum BuildConfiguration: String, CaseIterable, Encodable, Sendable {
-    case debug
-    case release
+public struct BuildConfiguration: CaseIterable {
+    public static var allCases = [BuildConfiguration]()
+
+    public let rawValue: String
+    public var traits: Set<String>
 
     public var dirname: String {
-        switch self {
-            case .debug: return "debug"
-            case .release: return "release"
-        }
+        self.rawValue
     }
+
+    public init(rawValue: String, traits: Set<String>) {
+        self.rawValue = rawValue
+        self.traits = traits
+        if traits.isEmpty {
+            self.traits = [rawValue]
+        }
+        Self.allCases.append(self)
+    }
+}
+
+extension BuildConfiguration: Encodable, Sendable, Equatable, Hashable {
+
 }

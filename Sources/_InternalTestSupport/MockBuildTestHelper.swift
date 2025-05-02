@@ -79,7 +79,7 @@ public let defaultTargetTriple: String = hostTriple.tripleString
 public func mockBuildParameters(
     destination: BuildParameters.Destination,
     buildPath: AbsolutePath? = nil,
-    config: BuildConfiguration = .debug,
+    config: BuildConfiguration? = nil,
     toolchain: PackageModel.Toolchain = MockToolchain(),
     flags: PackageModel.BuildFlags = PackageModel.BuildFlags(),
     buildSystemKind: BuildSystemProvider.Kind = .native,
@@ -108,7 +108,7 @@ public func mockBuildParameters(
         prepareForIndexing: prepareForIndexing,
         debuggingParameters: .init(
             triple: triple,
-            shouldEnableDebuggingEntitlement: config == .debug,
+            shouldEnableDebuggingEntitlement: config?.traits.contains("DEBUG") == true,
             omitFramePointers: omitFramePointers
         ),
         driverParameters: .init(
@@ -144,7 +144,7 @@ public func mockBuildParameters(
 
     return mockBuildParameters(
         destination: destination,
-        config: environment.configuration ?? .debug,
+        config: environment.configuration,
         triple: triple
     )
 }

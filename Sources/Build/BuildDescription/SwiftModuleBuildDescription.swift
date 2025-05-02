@@ -962,11 +962,8 @@ public final class SwiftModuleBuildDescription {
     private var activeCompilationConditions: [String] {
         var compilationConditions = ["-DSWIFT_PACKAGE"]
 
-        switch self.buildParameters.configuration {
-        case .debug:
+        if self.buildParameters.configuration?.traits.contains("DEBUG") == true {
             compilationConditions += ["-DDEBUG"]
-        case .release:
-            break
         }
 
         if bundlePath != nil {
@@ -980,11 +977,10 @@ public final class SwiftModuleBuildDescription {
 
     /// Optimization arguments according to the build configuration.
     private var optimizationArguments: [String] {
-        switch self.buildParameters.configuration {
-        case .debug:
-            return ["-Onone"]
-        case .release:
-            return ["-O"]
+        if self.buildParameters.configuration?.traits.contains("DEBUG") == true {
+            ["-Onone"]
+        } else {
+            ["-O"]
         }
     }
 
@@ -1036,13 +1032,7 @@ public final class SwiftModuleBuildDescription {
     /// enabled.
     package var useWholeModuleOptimization: Bool {
         if self.target.underlying.isEmbeddedSwiftTarget { return true }
-
-        switch self.buildParameters.configuration {
-        case .debug:
-            return false
-        case .release:
-            return true
-        }
+        return self.buildParameters.configuration?.traits.contains("RELEASE") == true
     }
 }
 

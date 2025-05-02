@@ -167,6 +167,7 @@ let package = Package(
             exclude: ["CMakeLists.txt"],
             swiftSettings: commonExperimentalFeatures + [
                 .define("USE_IMPL_ONLY_IMPORTS"),
+                .define("Something", .when(configuration: .new(config: "this"))),
                 .unsafeFlags(["-package-description-version", "999.0"]),
                 .unsafeFlags(["-enable-library-evolution"]),
             ],

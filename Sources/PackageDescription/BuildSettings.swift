@@ -19,11 +19,16 @@ public struct BuildConfiguration: Sendable {
         self.config = config
     }
 
+    public static func new(config: String) {
+        customs.append(BuildConfiguration(config))
+    }
+
     /// The debug build configuration.
     public static let debug: BuildConfiguration = BuildConfiguration("debug")
 
     /// The release build configuration.
     public static let release: BuildConfiguration = BuildConfiguration("release")
+    public static var customs: [BuildConfiguration] = [.debug, .release]
 }
 
 /// A condition that limits the application of a build setting.

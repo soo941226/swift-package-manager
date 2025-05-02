@@ -269,7 +269,7 @@ public final class SwiftBuildSystem: SPMBuildCore.BuildSystem {
 
             do {
                 try await withSession(service: service, name: self.buildParameters.pifManifest.pathString, packageManagerResourcesDirectory: self.packageManagerResourcesDirectory) { session, _ in
-                    self.outputStream.send("Building for \(self.buildParameters.configuration == .debug ? "debugging" : "production")...\n")
+                    self.outputStream.send("Building for \(self.buildParameters.configuration?.traits.contains("DEBUG") == true ? "debugging" : "production")...\n")
 
                     // Load the workspace, and set the system information to the default
                     do {
@@ -488,7 +488,7 @@ public final class SwiftBuildSystem: SPMBuildCore.BuildSystem {
 
         // Generate the build parameters.
         var params = SwiftBuild.SWBBuildParameters()
-        params.configurationName = buildParameters.configuration.swiftbuildName
+        params.configurationName = buildParameters.configuration?.swiftbuildName
         var overridesSynthesized = SwiftBuild.SWBSettingsTable()
         for (key, value) in settings {
             overridesSynthesized.set(value: value, for: key)

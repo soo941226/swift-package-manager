@@ -54,7 +54,7 @@ public struct BuildParameters: Encodable {
     public var dataPath: Basics.AbsolutePath
 
     /// The build configuration.
-    public var configuration: BuildConfiguration
+    public var configuration: BuildConfiguration?
 
     /// The toolchain.
     public var toolchain: Toolchain { _toolchain.toolchain }
@@ -150,7 +150,7 @@ public struct BuildParameters: Encodable {
     public init(
         destination: Destination,
         dataPath: Basics.AbsolutePath,
-        configuration: BuildConfiguration,
+        configuration: BuildConfiguration?,
         toolchain: Toolchain,
         triple: Triple? = nil,
         flags: BuildFlags,
@@ -172,7 +172,7 @@ public struct BuildParameters: Encodable {
         let triple = try triple ?? .getHostTriple(usingSwiftCompiler: toolchain.swiftCompilerPath)
         self.debuggingParameters = debuggingParameters ?? .init(
             triple: triple,
-            shouldEnableDebuggingEntitlement: configuration == .debug,
+            shouldEnableDebuggingEntitlement: configuration?.traits.contains("DEBUG") == true,
             omitFramePointers: nil
         )
 
@@ -230,7 +230,7 @@ public struct BuildParameters: Encodable {
         // TODO: query the build system for this.
         switch buildSystemKind {
         case .xcode, .swiftbuild:
-            var configDir: String = configuration.dirname.capitalized
+            var configDir: String = configuration?.dirname.capitalized ?? ""
             if self.triple.isWindows() {
                 configDir += "-windows"
             } else if self.triple.isLinux() {
@@ -238,7 +238,7 @@ public struct BuildParameters: Encodable {
             }
             return dataPath.appending(components: "Products", configDir)
         case .native:
-            return dataPath.appending(component: configuration.dirname)
+            return dataPath.appending(component: configuration?.dirname ?? "")
         }
     }
 
@@ -261,7 +261,7 @@ public struct BuildParameters: Encodable {
     public var llbuildManifest: Basics.AbsolutePath {
         // FIXME: this path isn't specific to `BuildParameters` due to its use of `..`
         // FIXME: it should be calculated in a different place
-        return dataPath.appending(components: "..", configuration.dirname + ".yaml")
+        return dataPath.appending(components: "..", configuration?.dirname.appending(".yaml") ?? "")
     }
 
     public var pifManifest: Basics.AbsolutePath {

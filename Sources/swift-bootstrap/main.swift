@@ -64,7 +64,7 @@ struct SwiftBootstrapBuildTool: AsyncParsableCommand {
     }
 
     @Option(name: .shortAndLong, help: "Build with configuration")
-    public var configuration: BuildConfiguration = .debug
+    public var configuration: BuildConfiguration?
 
     @Option(name: .customLong("Xcc", withSingleDash: true),
             parsing: .unconditionalSingleValue,
@@ -245,7 +245,7 @@ struct SwiftBootstrapBuildTool: AsyncParsableCommand {
             packagePath:  AbsolutePath,
             scratchDirectory: AbsolutePath,
             buildSystem: BuildSystemProvider.Kind,
-            configuration: BuildConfiguration,
+            configuration: BuildConfiguration?,
             architectures: [String],
             buildFlags: BuildFlags,
             manifestBuildFlags: [String],
@@ -273,7 +273,7 @@ struct SwiftBootstrapBuildTool: AsyncParsableCommand {
             packagePath: AbsolutePath,
             scratchDirectory: AbsolutePath,
             buildSystem: BuildSystemProvider.Kind,
-            configuration: BuildConfiguration,
+            configuration: BuildConfiguration?,
             architectures: [String],
             buildFlags: BuildFlags,
             manifestBuildFlags: [String],
@@ -490,7 +490,7 @@ extension AbsolutePath {
 
 extension BuildConfiguration {
     public init?(argument: String) {
-        self.init(rawValue: argument)
+        self.init(rawValue: argument, traits: [])
     }
 }
 

@@ -1330,7 +1330,7 @@ public final class PackageBuilder {
     func buildConditions(from condition: PackageConditionDescription?) -> [PackageCondition] {
         var conditions: [PackageCondition] = []
 
-        if let config = condition?.config.flatMap({ BuildConfiguration(rawValue: $0) }) {
+        if let config = condition?.config.flatMap({ BuildConfiguration(rawValue: $0, traits: condition?.traits ?? []) }) {
             conditions.append(.init(configuration: config))
         }
 
